@@ -40,14 +40,18 @@ def confirm_illuminati (file_name):
   center = (box_x + (box_w/2), box_y + (box_h/2))
 
   for i in range(2,5):
-    width  = int(orig_w/i*1.0)
-    height = int(orig_h/i*1.0)
-    frame = (center[0] - width, center[1]-height, width*i, height*i)
+    c_x = center[0]
+    c_y = center[1]
 
-    crop_x = box_x + orig_w/i
-    crop_y = box_y + orig_h/i
+    crop_x = int(box_x - orig_w/i)
+    crop_y = int(box_y - orig_h/i)
 
-    crop_img = img[]
+    crop_w = int(box_w + orig_w/i)
+    crop_h = int(box_h + orig_h/i)
+
+    crop_image = img[crop_y:crop_h, crop_x:crop_w]
+
+    dst = cv2.resize(crop_image, (orig_h, orig_w))
 
     #finally, write the new file
     cv2.imwrite(file_name[:-4]+'_zoom_'+str(i)+'.jpg', dst)
