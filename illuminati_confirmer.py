@@ -35,47 +35,23 @@ def confirm_illuminati (file_name):
 
   box_x, box_y, box_w, box_h = cv2.boundingRect(largest_contour)
 
-  '''
-  corners of box:
-  box_x,
-  box_x + box_w,
-  similar for y and h
-  '''
-
-  #yolo = img[box_y:box_h+box_y, box_x:box_w+box_x]
-
-  #display_img(yolo)
-
   orig_h, orig_w = img.shape[:2]
 
   center = (box_x + ((box_w-1)/2), box_y + ((box_h-1)/2))
 
+  big_box_w = min(box_w * 5, orig_w)
+  big_box_h = min(box_h * 5, orig_h)
+
   for i in range(2,5):
-    '''
-    c_x = center[0]
-    c_y = center[1]
+    crop_x = box_x - int(box_x/i)
+    crop_y = box_y - int(box_y/i)
 
-    scale = i * 2
-
-    crop_x = int(box_x - orig_w/scale)
-    crop_y = int(box_y - orig_h/scale)
-
-    crop_w = int(box_w + orig_w/scale)
-    crop_h = int(box_h + orig_h/scale)
-
-    #crop_image = img[crop_y:crop_h, crop_x:crop_w]
-    crop_image = img[box_y:box_h, box_x:box_w]
-    '''
-
-    crop_x = box_x - int(100/i)
-    crop_y = box_y - int(100/i)
-
-    crop_w = box_x+box_w + int(100/i)
-    crop_h = box_y+box_h + int(100/i)
+    crop_w = box_x+box_w + int(box_x/i)
+    crop_h = box_y+box_h + int(box_y/i)
 
     crop_image = img[crop_y:crop_h, crop_x:crop_w]
 
-    display_img(crop_image)
+    #display_img(crop_image)
 
     dst = cv2.resize(crop_image, (orig_w, orig_h))
 
