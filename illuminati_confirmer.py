@@ -37,8 +37,6 @@ def confirm_illuminati (file_name):
 
   orig_h, orig_w = img.shape[:2]
 
-  center = (box_x + ((box_w-1)/2), box_y + ((box_h-1)/2))
-
   big_box_w = min(box_w * 5, orig_w)
   big_box_h = min(box_h * 5, orig_h)
 
@@ -59,6 +57,19 @@ def confirm_illuminati (file_name):
     cv2.imwrite(file_name[:-4]+'_zoom_'+str(i-1)+'.jpg', dst)
 
   cv2.drawContours(copy, [largest_contour], FIRST, RED, THICKNESS)
+
+  global cage_mode_on
+  if cage_mode_on:
+    # load the cage img
+    cage_image = cv2.imread('BEES.png', -1)
+    # re-scale it to fit in the triangle
+    cage_image = cv2.resize(cage_image, (box_w, box_h))
+    #offset_on_triangle = int(box_y + (box_h / 2))
+
+    #img[offset_on_triangle:offset_on_triangle+cage_image.shape[0], offset_on_triangle:offset_on_triangle+cage_image.shape[1]] = cage_image
+    for c in range(0,3):
+      img[box_y:box_y+cage_image.shape[0], box_x:box_x+cage_image.shape[1], c] = cage_image[:,:,c] * (cage_image[:,:,3]/255.0) + img[box_y:box_y+cage_image.shape[0], box_x:box_x+cage_image.shape[1], c] * (1.0 - cage_image[:,:,3]/255.0)
+
   cv2.imwrite(file_name[:-4] + '_result.jpg', copy)
   return num_illuminati_found
 
@@ -74,6 +85,12 @@ sleep(1)
 print 'running illuminati.exe'
 sleep(1)
 illuminati_count = 0
+
+cage_mode_on = False
+
+if sys.argv[-1] == 'BEES?':
+  cage_mode_on = True
+  sys.argv = sys.argv[:-1]
 
 for file_index in range(1, len(sys.argv)):
   file_name = sys.argv[file_index]

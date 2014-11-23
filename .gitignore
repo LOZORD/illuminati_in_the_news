@@ -34,3 +34,5 @@ build/
 .rvmrc
 
 *.jpg
+!test.jpg
+!BEES.png
