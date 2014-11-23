@@ -36,3 +36,5 @@ build/
 *.jpg
 !test.jpg
 !BEES.png
+!DECLARATION.jpg
+!DECLARATION_edit.jpg

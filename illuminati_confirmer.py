@@ -59,17 +59,29 @@ def confirm_illuminati (file_name):
   cv2.drawContours(copy, [largest_contour], FIRST, RED, THICKNESS)
 
   global cage_mode_on
+  global cage_image_name
   if cage_mode_on:
     # load the cage img
-    cage_image = cv2.imread('BEES.png', -1)
+    if cage_image_name == 'BEES.png':
+      cage_image = cv2.imread(cage_image_name, -1)
+    else:
+      cage_image = cv2.imread(cage_image_name)
     # re-scale it to fit in the triangle
     cage_image = cv2.resize(cage_image, (box_w, box_h))
     #offset_on_triangle = int(box_y + (box_h / 2))
 
-    #img[offset_on_triangle:offset_on_triangle+cage_image.shape[0], offset_on_triangle:offset_on_triangle+cage_image.shape[1]] = cage_image
-    for c in range(0,3):
-      img[box_y:box_y+cage_image.shape[0], box_x:box_x+cage_image.shape[1], c] = cage_image[:,:,c] * (cage_image[:,:,3]/255.0) + img[box_y:box_y+cage_image.shape[0], box_x:box_x+cage_image.shape[1], c] * (1.0 - cage_image[:,:,3]/255.0)
-
+    if cage_image_name == 'BEES.png':
+      for c in range(0,3):
+        img[box_y:box_y+cage_image.shape[0], box_x:box_x+cage_image.shape[1], c] = cage_image[:,:,c] * (cage_image[:,:,3]/255.0) + img[box_y:box_y+cage_image.shape[0], box_x:box_x+cage_image.shape[1], c] * (1.0 - cage_image[:,:,3]/255.0)
+    else:
+      '''
+      cage_image = np.array(cage_image).flatten()
+      print '***'
+      print str(cage_image)
+      '''
+      cage_h = cage_image.shape[0]
+      cage_w = cage_image.shape[1]
+      img[box_y:box_y+cage_h, box_x:box_x+cage_w, ] = cage_image
   cv2.imwrite(file_name[:-4] + '_result.jpg', copy)
   return num_illuminati_found
 
@@ -87,9 +99,11 @@ sleep(1)
 illuminati_count = 0
 
 cage_mode_on = False
+cage_image_name = None
 
-if sys.argv[-1] == 'BEES?':
+if sys.argv[-1] == 'BEES?' or sys.argv[-1] == 'DECLARATION?':
   cage_mode_on = True
+  cage_image_name = 'BEES.png' if sys.argv[-1] == 'BEES?' else 'DECLARATION.jpg'
   sys.argv = sys.argv[:-1]
 
 for file_index in range(1, len(sys.argv)):
