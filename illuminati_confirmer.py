@@ -18,15 +18,20 @@ def confirm_illuminati (file_name):
   RED = (0, 0, 255)
   THICKNESS = 3
 
+  largest_contour = None
+
   for some_contour in contours:
     approx = cv2.approxPolyDP(some_contour, 0.01*cv2.arcLength(some_contour, True), True)
     l = len(approx)
 
+    # if we find a triangle
     if l == 3:
       print 'ILLUMINATI CONFIRMED!'
       num_illuminati_found += 1
-      cv2.drawContours(copy, [some_contour], FIRST, RED, 3)
+      if largest_contour is None or cv2.contourArea(some_contour) > cv2.contourArea(largest_contour):
+        largest_contour = some_contour
 
+  cv2.drawContours(copy, [largest_contour], FIRST, RED, THICKNESS)
   cv2.imwrite(file_name[:-4] + '_result.jpg', copy)
   return num_illuminati_found
 
