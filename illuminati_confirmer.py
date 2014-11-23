@@ -1,38 +1,52 @@
 import numpy as np
 import cv2
 import sys
+from time import sleep
 
 # mad props to http://stackoverflow.com/questions/11424002/how-to-detect-simple-geometric-shapes-using-opencv
 
-img_name = sys.argv[1]
+def confirm_illuminati (file_name):
+  num_illuminati_found = 0
+  copy = img = cv2.imread(file_name, cv2.IMREAD_COLOR)
+  grey_img = cv2.imread(file_name, cv2.IMREAD_GRAYSCALE)
 
-print 'Using file ' + img_name
+  ret, thresh = cv2.threshold(grey_img, 127, 255, 1)
 
-copy = img = cv2.imread(img_name, cv2.IMREAD_COLOR)
-grey_img = cv2.imread(img_name, cv2.IMREAD_GRAYSCALE)
+  contours, h = cv2.findContours(thresh, 1, 2)
 
-cv2.imshow('image', img)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+  FIRST = 0
+  RED = (0, 0, 255)
+  THICKNESS = 3
 
-ret, thresh = cv2.threshold(grey_img, 127, 255, 1)
+  for some_contour in contours:
+    approx = cv2.approxPolyDP(some_contour, 0.01*cv2.arcLength(some_contour, True), True)
+    l = len(approx)
 
-contours, h = cv2.findContours(thresh, 1, 2)
+    if l == 3:
+      print 'ILLUMINATI CONFIRMED!'
+      num_illuminati_found += 1
+      cv2.drawContours(copy, [some_contour], FIRST, RED, 3)
 
-FIRST = 0
-RED = (0, 0, 255)
-THICKNESS = 3
+  cv2.imwrite(file_name[:-4] + '_result.jpg', copy)
+  return num_illuminati_found
 
-for some_contour in contours:
-  approx = cv2.approxPolyDP(some_contour, 0.01*cv2.arcLength(some_contour, True), True)
-  l = len(approx)
+### MAIN PROGRAM BELOW ###
 
-  if l == 3:
-    print 'TRIANGLE FOUND!'
-    cv2.drawContours(copy, [some_contour], FIRST, RED, 3)
+print '---> executing: hack illuminati'
+sleep(3)
+print 'running illuminati.exe'
+sleep(1)
+illuminati_count = 0
 
-cv2.imshow('result', copy)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+for file_index in range(1, len(sys.argv)):
+  file_name = sys.argv[file_index]
+  print 'Processing meme: ' + file_name
+  illuminati_count += confirm_illuminati(file_name)
 
-cv2.imwrite('result.jpg', copy)
+print 'Congratulation, you have rekt the Illuminate'
+print 'You have identified ' + str(illuminati_count) + ' of [REDACTED] total Illuminati'
+sleep(1)
+print '---> exiting illuminati.exe'
+sleep(1)
+print 'Have a nice day!'
+
