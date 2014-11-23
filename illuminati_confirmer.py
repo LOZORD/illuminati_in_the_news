@@ -7,7 +7,7 @@ from time import sleep
 
 def confirm_illuminati (file_name):
   num_illuminati_found = 0
-  copy = img = cv2.imread(file_name, cv2.IMREAD_COLOR)
+  dst = copy = img = cv2.imread(file_name, cv2.IMREAD_COLOR)
   grey_img = cv2.imread(file_name, cv2.IMREAD_GRAYSCALE)
 
   ret, thresh = cv2.threshold(grey_img, 127, 255, 1)
@@ -31,6 +31,27 @@ def confirm_illuminati (file_name):
       if largest_contour is None or cv2.contourArea(some_contour) > cv2.contourArea(largest_contour):
         largest_contour = some_contour
 
+  # then output the zoom-in and final image
+
+  box_x, box_y, box_w, box_h = cv2.boundingRect(largest_contour)
+
+  orig_h, orig_w = img.shape[:2]
+
+  center = (box_x + (box_w/2), box_y + (box_h/2))
+
+  for i in range(2,5):
+    width  = int(orig_w/i*1.0)
+    height = int(orig_h/i*1.0)
+    frame = (center[0] - width, center[1]-height, width*i, height*i)
+
+    crop_x = box_x + orig_w/i
+    crop_y = box_y + orig_h/i
+
+    crop_img = img[]
+
+    #finally, write the new file
+    cv2.imwrite(file_name[:-4]+'_zoom_'+str(i)+'.jpg', dst)
+
   cv2.drawContours(copy, [largest_contour], FIRST, RED, THICKNESS)
   cv2.imwrite(file_name[:-4] + '_result.jpg', copy)
   return num_illuminati_found
@@ -38,7 +59,7 @@ def confirm_illuminati (file_name):
 ### MAIN PROGRAM BELOW ###
 
 print '---> executing: hack illuminati'
-sleep(3)
+sleep(1)
 print 'running illuminati.exe'
 sleep(1)
 illuminati_count = 0
